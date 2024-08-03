@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restoran MAKO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .menu {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .menu button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .menu button:hover {
+            background-color: #45a049;
+        }
+
+        .section {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu-items div {
+            margin: 10px 0;
+        }
+
+        .order-summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-summary th, .order-summary td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .order-summary th {
+            background-color: #f2f2f2;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: #4CAF50;
+        }
+
+        .order-buttons {
+            text-align: center;
+        }
+
+        .order-buttons button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        .order-buttons button:hover {
+            background-color: #45a049;
+        }
+
+        .payment-options {
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .menu button {
+                margin-bottom: 10px;
+            }
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SELAMAT DATANG DI MAKO</h1>
+        </div>
+        <div class="menu">
+            <button onclick="showSection('orderMenu')">1. Pesan</button>
+            <button onclick="showSection('orderSummary')">2. Lihat Pesanan</button>
+            <button onclick="showSection('searchMenu')">3. Cari Pesanan</button>
+            <button onclick="showSection('editMenu')">4. Edit Pesanan</button>
+            <button onclick="showSection('payMenu')">5. Bayar</button>
+            <button onclick="resetOrders()">6. Reset</button>
+        </div>
+
+        <div class="section" id="orderMenu">
+            <h2>Menu</h2>
+            <div id="menuItems" class="menu-items">
+                <!-- Menu items will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <div class="section" id="orderSummary">
+            <h2>Data Pesanan</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kode</th>
+                        <th>Nama Roti</th>
+                        <th>Jumlah</th>
+                        <th>Atas Nama</th>
+                        <th>Harga</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTable">
+                    <!-- Order rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="searchMenu">
+            <h2>Cari Pesanan</h2>
+            <input type="text" id="searchName" placeholder="Masukkan Nama">
+            <div class="order-buttons">
+                <button onclick="searchOrder()">Cari</button>
+            </div>
+            <div id="searchResult"></div>
+        </div>
+
+        <div class="section" id="editMenu">
+            <h2>Edit Pesanan</h2>
+            <div id="editOrders">
+                <!-- Orders for editing will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <div class="section" id="payMenu">
+            <h2>Pembayaran</h2>
+            <input type="text" id="payName" placeholder="Masukkan Nama">
+            <div id="orderSelection"></div>
+            <div class="payment-options">
+                <label>
+                    <input type="radio" name="paymentMethod" value="cash" onchange="toggleCashInput(true)">
+                    Cash
+                </label>
+                <label>
+                    <input type="radio" name="paymentMethod" value="debit" onchange="toggleCashInput(false)">
+                    Debit
+                </label>
+            </div>
+            <div id="cashInput" style="display: none;">
+                <input type="number" id="cashAmount" placeholder="Masukkan Jumlah Uang">
+            </div>
+            <div class="order-buttons">
+                <button onclick="payOrder()">Bayar</button>
+            </div>
+            <div id="paymentSummary"></div>
+        </div>
+    </div>
+
+    <!-- Pop-up Pembayaran Berhasil -->
+    <div id="paymentSuccessPopup" class="popup hidden">
+        <div class="popup-content">
+            <span class="close-button" onclick="closePopup()">&times;</span>
+            <p>Pembayaran Berhasil!</p>
+        </div>
+    </div>
+
+    <script>
+        const menuItems = [
+            { kode: 'a', nama: 'Spicy Floss', harga: 12500 },
+            { kode: 'b', nama: 'Sausage Diva', harga: 12500 },
+            { kode: 'c', nama: 'Floss Roll', harga: 14500 },
+            { kode: 'd', nama: 'Choco Meises', harga: 12500 },
+            { kode: 'e', nama: 'Rendang Floss', harga: 12500 },
+            { kode: 'f', nama: 'Milky Bun', harga: 9000 },
+            { kode: 'g', nama: 'Coffee Bun', harga: 12000 },
+            { kode: 'h', nama: 'Choco Bun', harga: 9000 },
+            { kode: 'i', nama: 'Sugar Pillow', harga: 10000 },
+            { kode: 'j', nama: 'Banana Choco Cheese', harga: 12500 }
+        ];
+
+        let orders = [];
+
+        function showSection(sectionId) {
+            hideAllSections();
+            document.getElementById(sectionId).style.display = 'block';
+            if (sectionId === 'orderMenu') displayMenuItems();
+            if (sectionId === 'orderSummary') displayOrders();
+            if (sectionId === 'editMenu') displayEditOrders();
+        }
+
+        function hideAllSections() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.style.display = 'none');
+        }
+
+        function displayMenuItems() {
+            const menuContainer = document.getElementById('menuItems');
+            menuContainer.innerHTML = '';
+            menuItems.forEach(item => {
+                const menuItemDiv = document.createElement('div');
+                menuItemDiv.innerHTML = `
+                    <span>${item.kode} - ${item.nama} (Rp ${item.harga.toLocaleString()})</span>
+                    <input type="number" id="jumlah-${item.kode}" placeholder="Jumlah">
+                    <input type="text" id="nama-${item.kode}" placeholder="Atas Nama">
+                    <button onclick="addOrder('${item.kode}')">Pesan</button>
+                `;
+                menuContainer.appendChild(menuItemDiv);
+            });
+        }
+
+        function addOrder(kode) {
+            const jumlahInput = document.getElementById(`jumlah-${kode}`);
+            const namaInput = document.getElementById(`nama-${kode}`);
+            const jumlah = parseInt(jumlahInput.value);
+            const nama = namaInput.value;
+
+            if (isNaN(jumlah) || jumlah <= 0) {
+                alert('Jumlah harus lebih dari 0');
+                return;
+            }
+
+            if (!nama) {
+                alert('Nama tidak boleh kosong');
+                return;
+            }
+
+            const menuItem = menuItems.find(item => item.kode === kode);
+            const existingOrder = orders.find(order => order.kode === kode && order.nama === nama);
+
+            if (existingOrder) {
+                existingOrder.jumlah += jumlah;
+                existingOrder.total += jumlah * menuItem.harga;
+            } else {
+                orders.push({
+                    kode: menuItem.kode,
+                    nama: menuItem.nama,
+                    jumlah,
+                    harga: menuItem.harga,
+                    total: jumlah * menuItem.harga,
+                    atasNama: nama
+                });
+            }
+
+            jumlahInput.value = '';
+            namaInput.value = '';
+            alert('Pesanan ditambahkan');
+        }
+
+        function displayOrders() {
+            const orderTable = document.getElementById('orderTable');
+            orderTable.innerHTML = '';
+            orders.forEach((order, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${order.kode}</td>
+                    <td>${order.nama}</td>
+                    <td>${order.jumlah}</td>
+                    <td>${order.atasNama}</td>
+                    <td>${order.harga}</td>
+                    <td>${order.total}</td>
+                `;
+                orderTable.appendChild(row);
+            });
+        }
+
+        function searchOrder() {
+            const searchName = document.getElementById('searchName').value.trim().toLowerCase();
+            const searchResult = document.getElementById('searchResult');
+            searchResult.innerHTML = '';
+            
+            if (!searchName) {
+                searchResult.innerHTML = '<p>Nama tidak boleh kosong</p>';
+                return;
+            }
+
+            const filteredOrders = orders.filter(order => order.atasNama.toLowerCase().includes(searchName));
+            if (filteredOrders.length === 0) {
+                searchResult.innerHTML = '<p>Pesanan tidak ditemukan</p>';
+                return;
+            }
+
+            filteredOrders.forEach(order => {
+                const orderDiv = document.createElement('div');
+                orderDiv.innerHTML = `
+                    <p>Kode: ${order.kode}, Nama Roti: ${order.nama}, Jumlah: ${order.jumlah}, Atas Nama: ${order.atasNama}, Total: Rp ${order.total.toLocaleString()}</p>
+                `;
+                searchResult.appendChild(orderDiv);
+            });
+        }
+
+        function displayEditOrders() {
+            const editOrdersContainer = document.getElementById('editOrders');
+            editOrdersContainer.innerHTML = '';
+            
+            if (orders.length === 0) {
+                editOrdersContainer.innerHTML = '<p>Tidak ada pesanan untuk diedit</p>';
+                return;
+            }
+
+            orders.forEach((order, index) => {
+                const editOrderDiv = document.createElement('div');
+                editOrderDiv.innerHTML = `
+                    <p>${order.nama} (${order.atasNama}): ${order.jumlah}</p>
+                    <input type="number" id="editJumlah-${index}" value="${order.jumlah}">
+                    <button onclick="updateOrder(${index})">Update</button>
+                    <button onclick="deleteOrder(${index})">Hapus</button>
+                `;
+                editOrdersContainer.appendChild(editOrderDiv);
+            });
+        }
+
+        function updateOrder(index) {
+            const newJumlah = parseInt(document.getElementById(`editJumlah-${index}`).value);
+            if (isNaN(newJumlah) || newJumlah <= 0) {
+                alert('Jumlah harus lebih dari 0');
+                return;
+            }
+
+            const order = orders[index];
+            order.jumlah = newJumlah;
+            order.total = newJumlah * order.harga;
+            alert('Pesanan diperbarui');
+            displayOrders();
+            displayEditOrders();
+        }
+
+        function deleteOrder(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus pesanan ini?')) {
+                orders.splice(index, 1);
+                alert('Pesanan dihapus');
+                displayOrders();
+                displayEditOrders();
+            }
+        }
+
+        function toggleCashInput(show) {
+            const cashInput = document.getElementById('cashInput');
+            cashInput.style.display = show ? 'block' : 'none';
+        }
+
+        function payOrder() {
+            const payName = document.getElementById('payName').value.trim().toLowerCase();
+            const selectedOrderRadio = document.querySelector('input[name="orderSelection"]:checked');
+            
+            if (!payName) {
+                alert('Nama tidak boleh kosong');
+                return;
+            }
+
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            if (!paymentMethod) {
+                alert('Pilih metode pembayaran');
+                return;
+            }
+
+            const orderIndex = parseInt(selectedOrderRadio.value);
+            const order = orders[orderIndex];
+            const paymentSummary = document.getElementById('paymentSummary');
+            
+            if (!order) {
+                paymentSummary.innerHTML = '<p>Pesanan tidak ditemukan</p>';
+                return;
+            }
+
+            if (paymentMethod.value === 'cash') {
+                const cashAmount = parseInt(document.getElementById('cashAmount').value);
+                if (isNaN(cashAmount) || cashAmount < order.total) {
+                    alert('Jumlah uang tidak cukup');
+                    return;
+                }
+                const change = cashAmount - order.total;
+                paymentSummary.innerHTML = `
+                    <p>Pesanan atas nama ${order.atasNama} telah dibayar.</p>
+                    <p>Total: Rp ${order.total.toLocaleString()}</p>
+                    <p>Jumlah uang: Rp ${cashAmount.toLocaleString()}</p>
+                    <p>Kembalian: Rp ${change.toLocaleString()}</p>
+                `;
+            } else {
+                paymentSummary.innerHTML = `
+                    <p>Pesanan atas nama ${order.atasNama} telah dibayar dengan debit.</p>
+                    <p>Total: Rp ${order.total.toLocaleString()}</p>
+                `;
+            }
+
+            showPopup();
+            orders.splice(orderIndex, 1);
+            displayOrders();
+            displayEditOrders();
+        }
+
+        function resetOrders() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua pesanan?')) {
+                orders = [];
+                alert('Semua pesanan dihapus');
+                displayOrders();
+                displayEditOrders();
+            }
+        }
+
+        function showPopup() {
+            document.getElementById('paymentSuccessPopup').classList.remove('hidden');
+        }
+
+        function closePopup() {
+            document.getElementById('paymentSuccessPopup').classList.add('hidden');
+        }
+
+        function selectOrderForPayment() {
+            const payName = document.getElementById('payName').value.trim().toLowerCase();
+            const orderSelection = document.getElementById('orderSelection');
+            orderSelection.innerHTML = '';
+
+            const filteredOrders = orders.filter(order => order.atasNama.toLowerCase().includes(payName));
+
+            if (filteredOrders.length === 0) {
+                orderSelection.innerHTML = '<p>Pesanan tidak ditemukan</p>';
+                return;
+            }
+
+            filteredOrders.forEach((order, index) => {
+                const orderRadio = document.createElement('div');
+                orderRadio.innerHTML = `
+                    <label>
+                        <input type="radio" name="orderSelection" value="${index}">
+                        ${order.nama} (${order.atasNama}) - Rp ${order.total.toLocaleString()}
+                    </label>
+                `;
+                orderSelection.appendChild(orderRadio);
+            });
+        }
+
+        document.getElementById('payName').addEventListener('input', selectOrderForPayment);
+    </script>
+</body>
+</html>

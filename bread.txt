@@ -1,0 +1,6 @@
+a  Spicy_Floss              2    Anin                12500     25000     
+a  Spicy_Floss              1    Imam                12500     12500     
+a  Spicy_Floss              1    Imam                12500     12500     
+a  Spicy_Floss              2    dila                12500     25000     
+b  Sausage_Diva             1    dila                12500     12500     
+f  Milky_Bun                1    fadhila             9000      9000      

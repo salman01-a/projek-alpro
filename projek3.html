@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restoran MAKO</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SELAMAT DATANG DI MAKO</h1>
+        </div>
+        <div class="menu">
+            <button onclick="showSection('orderMenu')">1. Pesan</button>
+            <button onclick="showSection('orderSummary')">2. Lihat Pesanan</button>
+            <button onclick="showSection('searchMenu')">3. Cari Pesanan</button>
+            <button onclick="showSection('editMenu')">4. Edit Pesanan</button>
+            <button onclick="showSection('payMenu')">5. Bayar</button>
+            <button onclick="resetOrders()">6. Reset</button>
+        </div>
+
+        <div class="section" id="orderMenu">
+            <h2>Menu</h2>
+            <div id="menuItems" class="menu-items">
+                <input type="text" id="orderName" placeholder="Atas Nama">
+                <select id="menuSelect">
+                    <!-- Menu items will be inserted here by JavaScript -->
+                </select>
+                <input type="number" id="orderQuantity" min="1" placeholder="Jumlah">
+                <div class="order-buttons">
+                    <button onclick="addOrder()">Tambah Pesanan</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="orderSummary">
+            <h2>Data Pesanan</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kode</th>
+                        <th>Nama Roti</th>
+                        <th>Jumlah</th>
+                        <th>Atas Nama</th>
+                        <th>Harga</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTable">
+                    <!-- Order rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="searchMenu">
+            <h2>Cari Pesanan</h2>
+            <input type="text" id="searchName" placeholder="Masukkan Nama">
+            <div class="order-buttons">
+                <button onclick="searchOrder()">Cari</button>
+            </div>
+            <div id="searchResult"></div>
+        </div>
+
+        <div class="section" id="editMenu">
+            <h2>Edit Pesanan</h2>
+            <div id="editOrders">
+                <!-- Orders for editing will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <div class="section" id="payMenu">
+            <h2>Pembayaran</h2>
+            <input type="text" id="payName" placeholder="Masukkan Nama">
+            <div class="order-buttons">
+                <button onclick="showPaymentDetails()">Lihat Rincian</button>
+            </div>
+            <div id="paymentDetails"></div>
+            <div class="payment-options">
+                <label>
+                    <input type="radio" name="paymentMethod" value="cash" onchange="toggleCashInput(true)">
+                    Cash
+                </label>
+                <label>
+                    <input type="radio" name="paymentMethod" value="debit" onchange="toggleCashInput(false)">
+                    Debit
+                </label>
+            </div>
+            <div id="cashInput" style="display: none;">
+                <input type="number" id="cashAmount" placeholder="Masukkan Jumlah Uang">
+            </div>
+            <div class="order-buttons">
+                <button onclick="payOrder()">Bayar</button>
+            </div>
+            <div id="paymentSummary"></div>
+        </div>
+    </div>
+
+    <!-- Pop-up Pembayaran Berhasil -->
+    <div id="paymentSuccessPopup" class="popup hidden">
+        <div class="popup-content">
+            <span class="close-button" onclick="closePopup()">&times;</span>
+            <p>Pembayaran Berhasil!</p>
+        </div>
+    </div>
+
+    <script src="scrip3s.js"></script>
+</body>
+</html>
